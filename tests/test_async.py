@@ -23,7 +23,7 @@ async def test_async_mocks_are_enabled(timer, mocker):
 
     assert p.called
     assert p.awaited
-    assert t.seconds < 0.01  # mocked sleep
+    assert t.seconds < 0.1  # mocked sleep
 
 
 def test_async_test_was_executed_and_awaited():

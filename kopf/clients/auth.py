@@ -10,6 +10,7 @@ from typing import Optional, Callable, Any, TypeVar, Dict, Iterator, Mapping, ca
 
 import aiohttp
 
+from kopf.structs import configuration
 from kopf.structs import credentials
 
 # Per-operator storage and exchange point for authentication methods.
@@ -120,6 +121,8 @@ class APIContext:
 
         # Some SSL data are not accepted directly, so we have to use temp files.
         tempfiles = _TempFiles()
+        settings = configuration.OperatorSettings()
+
         ca_path: Optional[str]
         certificate_path: Optional[str]
         private_key_path: Optional[str]
@@ -195,6 +198,12 @@ class APIContext:
             ),
             headers=headers,
             auth=auth,
+            timeout=aiohttp.ClientTimeout(
+                total=settings.session.total_timeout,
+                sock_connect=settings.session.sock_connect_timeout,
+                sock_read=settings.session.sock_read_timeout,
+                connect=settings.session.connect_timeout
+            ),
         )
 
         # Add the extra payload information. We avoid overriding the constructor.
